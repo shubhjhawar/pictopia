@@ -1,26 +1,37 @@
 import React from 'react'
 import {GoogleLogin} from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import shareVideo from '../assets/share.mp4';
 import logo from '../assets/logowhite.png';
+import jwt_decode from 'jwt-decode';
 import { client } from '../client';
 
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const responseGoogle = (response) => {
-    localStorage.setItem('user', JSON.stringify(response.profileObj));
+  const { signIn } = useGoogleLogin({
+    clientId: process.env.REACT_APP_GOOGLE_API_TOKEN,
+    onSuccess: responseGoogle,
+    onFailure: responseGoogle,
+    scope: 'profile email',
+  });
 
-    const { name, googleId, imageUrl} = response.profileObj;
+  function responseGoogle (response) {
+    localStorage.setItem('user', JSON.stringify(response.credential));
+
+    const { sub, name, picture} = jwt_decode(response.credential);
 
     const doc = {
-      _id : googleId,
+      _id : sub,
       _type : 'user',
       userName : name,
-      image : imageUrl,
+      image : picture,
     }
+
+    localStorage.setItem('user', JSON.stringify(doc));
 
     client.createIfNotExists(doc)
       .then(() => {
@@ -50,11 +61,16 @@ const Login = () => {
             <GoogleLogin
               clientId={process.env.REACT_APP_GOOGLE_API_TOKEN}
               render={(renderProps) => (
-                <button
-                  type="button"
-                  className="bg-mainColor flex justify-center p-3 rounded-lg cursor-pointer outline-none"
-                  onClick = {renderProps.onClick}
-                  disabled = {renderProps.disabled}
+                // <button
+                //   type="button"
+                //   className="bg-mainColor flex justify-center p-3 rounded-lg cursor-pointer outline-none"
+                //   onClick = {renderProps.onClick}
+                //   disabled = {renderProps.disabled}
+                // >
+                <button 
+                  type='button'
+                  className='bg-mainColor flex justify-center p-3 rounded-lg cursor-pointer outline-none'
+                  onClick={signIn}
                 >
                   <FcGoogle className="mr-4" /> Sign in with Google
                 </button>
