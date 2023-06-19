@@ -12,19 +12,17 @@ import { fetchUser } from '../utils/fetchUser';
 
 const Pin = ({pin: {postedBy, image, _id, destination, save}}) => {
     const [postHovered, setPostHovered] = useState(false);
-    const [savingPost, setSavingPost] = useState(false);
 
     const navigate = useNavigate();
 
     const user = fetchUser();
 
     const alreadySaved = !!(save?.filter((item) => item.postedBy._id === user._id))?.length;
-    const savePin = (_id) => {
+    const savePin = (id) => {
         if(!alreadySaved) {
-            setSavingPost(true);
             
             client
-                .patch(_id)
+                .patch(id)
                 .setIfMissing({save: []})
                 .insert('after', 'save[-1]', [{
                     _key: uuidv4(),
@@ -37,9 +35,16 @@ const Pin = ({pin: {postedBy, image, _id, destination, save}}) => {
                 .commit()
                 .then(() => {
                     window.location.reload();
-                    setSavingPost(false);
                 })
         }
+    }
+
+    const deletePin = (id) => {
+        client
+            .delete(id)
+            .then(() => {
+                window.location.reload();
+            })
     }
     
     return (
@@ -81,14 +86,50 @@ const Pin = ({pin: {postedBy, image, _id, destination, save}}) => {
                         >
                             save
                         </button>
-                    )
-                    }
+                    )}
+                </div>
+                <div className="flex justify-between items-center gap-2 w-full">
+                    {destination && (
+                        <a 
+                            href={destination}
+                            target="_blank"
+                            rel = 'noreferrer'
+                            className='bg-white flex items-center gap-2 text-black font-bold p-2 pl-4 pr-4 rounded-full opacity:70 hover:opacity-100 hover:shadow-md'
+                            onClick = {(e) => {
+                                e.stopPropagation();
+                            }}
+                        >
+                            <BsFillArrowUpRightCircleFill />
+                            {destination.length > 20 ? destination.slice(8,20) : destination.slice(8)}
+                        </a>
+                    )}
+                    {postedBy?._id === user._id && (
+                        <button
+                            type="button"
+                            onClick = {(e) => {
+                                e.stopPropagation();
+                                deletePin(_id);
+                            }}
+                            className="bg-white p-2 opacity-70 hover:opacity-100 font-bold text-dark text-base rounded-3xl hover:shadow-md outlined-none"
+                        >
+                            <AiTwotoneDelete />
+                        </button>     
+                    )}
                 </div>
                 
             </div>
         )}
         </div>
-
+        <Link
+            to = {`user-profile/${postedBy?._id}`}
+            className='flex gap-2 mt-2 items-center'
+        >
+            <img 
+                className='w-8 h-8 rounded-full object-cover'
+                src = {postedBy?.image} alt="user image" 
+            />
+            <p className='font-semibold capitalize'>{postedBy?.userName}</p>
+        </Link>
 
     </div>
     )
