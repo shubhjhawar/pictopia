@@ -9,7 +9,7 @@ import {pinDetailMorePinQuery, pinDetailQuery} from '../utils/data';
 import Spinner from './Spinner';
 
 
-const PinDetail = () => {
+const PinDetail = ({user}) => {
 
   const [pins, setPins] = useState(null);
   const [pinDetail, setPinDetail] = useState(null);
@@ -17,33 +17,48 @@ const PinDetail = () => {
   const [addingComment, setAddingComment] = useState(false);
   const {pinId} = useParams();
 
-  
   const fetchPinDetails = () => {
-    let query = pinDetailQuery(pinId);
-    
-    if(query) {
-      client.fetch(query)
-      .then((data) => {
+    const query = pinDetailQuery(pinId);
+
+    if (query) {
+      client.fetch(`${query}`).then((data) => {
         setPinDetail(data[0]);
-        
-        if(data[0]){
-          query = pinDetailMorePinQuery(data[0]);
-          
-          client.fetch(query)
-          .then((res) => setPins(res));
+        console.log(data);
+        if (data[0]) {
+          const query1 = pinDetailMorePinQuery(data[0]);
+          client.fetch(query1).then((res) => {
+            setPins(res);
+          });
         }
-      })
+      });
     }
   };
 
   useEffect(() => {
     fetchPinDetails();
-    
-  }, [pinId])
+  }, [pinId]);
+
+  const addComment = () => {
+    if (comment) {
+      setAddingComment(true);
+
+      client
+        .patch(pinId)
+        .setIfMissing({ comments: [] })
+        .insert('after', 'comments[-1]', [{ comment, _key: uuidv4(), postedBy: { _type: 'postedBy', _ref: user._id } }])
+        .commit()
+        .then(() => {
+          fetchPinDetails();
+          setComment('');
+          setAddingComment(false);
+        });
+    }
+  };
 
   if(!pinDetail) return <Spinner message="loading pin" />
   
   return (
+    <>
     <div className='flex xl-flex-row flex-col m-auto bg-white' style={{maxWidth:"1500px", borderRadius:'32px'}}>
       <div className='flex justify-center items-center md:items-center flex-initial'>
         <img 
@@ -88,7 +103,7 @@ const PinDetail = () => {
               <img 
                 src={comment.postedBy.image} 
                 alt='user profile'
-                classNAme='w-10 h-10 rounded-fullcursor-pointer'
+                className='w-10 h-10 rounded-fullcursor-pointer'
               />
               <div className='flex flex-col'>
                 <p className='font-bold'>{comment.postedBy.userName}</p>
@@ -97,8 +112,43 @@ const PinDetail = () => {
             </div>
           ))}
         </div>
+        <div className='flex flex-wrap mt-6 gap-3'>
+        <Link
+            to = {`user-profile/${pinDetail.postedBy?._id}`}
+        >
+            <img 
+                className='w-10 h-10 rounded-full cursor-pointer'
+                src = {pinDetail.postedBy?.image} alt="user image" 
+            />
+        </Link>
+        <input 
+            className='flex-1 border-gray-100 outline-none border-2 p-2 rounded-2xl focus:border-gray-300 ' 
+            type='text'
+            placeholder='Add a comment'
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+        />
+        <button
+          type="button"
+          className='bg-red-500 text-white rounded-full px-6 py-2 font-semifold outline-none'
+          onClick={addComment}
+        >
+          {addingComment ? 'Posting the Comment' : "Post"}
+        </button>
+        </div>
       </div>
     </div>
+    {pins?.length > 0 ? (
+      <>
+      <h2 className="text-center font-bold text-2xl mt-8 mb-4">
+        More Like this 
+      </h2>
+      <MasonryLayout pins={pins}/>
+      </>
+    ):(
+      <Spinner message="Loading More Pins...." />
+    )}
+    </>
   )
 }
 
