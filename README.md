@@ -20,13 +20,13 @@ Pictopia is a web application inspired by Pinterest, providing users with a plat
 - **Authentication**: The user authentication system is implemented using libraries and frameworks compatible with React and Sanity.
 
 ## Setup and Usage
-To access and use Pictopia, you can visit the deployed application at [https://your-pictopia-url.com](https://your-pictopia-url.com). Please replace "your-pictopia-url" with the actual URL where your application is deployed.
+To access and use Pictopia, you can visit the deployed application at [https://pictopiaaa.netlify.app/](https://pictopiaaa.netlify.app/).
 
 If you prefer to set up and run Pictopia on your local machine, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/pictopia.git
+   git clone https://github.com/shubhjhawar/pictopia.git
    ```
 
 2. Install dependencies:
@@ -56,8 +56,8 @@ Contributions to Pictopia are welcome! If you'd like to contribute to the projec
 
 
 ## Contact
-If you have any questions or suggestions regarding Pictopia, feel free to reach out to us at pictopia@example.com.
+If you have any questions or suggestions regarding Pictopia, feel free to reach out to us at shubhjhawar78@gmail.com.
 
 Thank you for using Pictopia! We hope you enjoy discovering and saving inspiring images on our platform.
 
-Please note that the deployed application can be accessed at [https://your-pictopia-url.com](https://pictopiaaa.netlify.app/).
+Please note that the deployed application can be accessed at [https://pictopiaaa.netlify.app/](https://pictopiaaa.netlify.app/).
