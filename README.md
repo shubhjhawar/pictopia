@@ -3,6 +3,8 @@
 ## Overview
 Pictopia is a web application inspired by Pinterest, providing users with a platform to discover, save, and comment on inspiring images. Built using React and JavaScript, Pictopia allows users to create collections, browse through a wide variety of images, and engage with the community through comments. The application uses Sanity as the backend for data storage and management.
 
+The deployed application can be accessed at [https://pictopiaaa.netlify.app/](https://pictopiaaa.netlify.app/).
+
 ## Features
 - **User Authentication**: Pictopia includes a user authentication system that enables users to create accounts, log in, and securely access their profiles.
 - **Responsive Design**: The application is designed to be responsive, ensuring an optimal viewing experience across different screen sizes and devices.
@@ -60,4 +62,3 @@ If you have any questions or suggestions regarding Pictopia, feel free to reach 
 
 Thank you for using Pictopia! We hope you enjoy discovering and saving inspiring images on our platform.
 
-Please note that the deployed application can be accessed at [https://pictopiaaa.netlify.app/](https://pictopiaaa.netlify.app/).
